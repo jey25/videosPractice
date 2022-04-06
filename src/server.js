@@ -17,7 +17,7 @@ const login = (req, res) => {
 
 app.use(logger);
 app.get("/", Home);
-app.get("/login", login)
+app.get("/login", login);
 
 const Listening = () => 
 console.log(`server port : ${PORT}`);
