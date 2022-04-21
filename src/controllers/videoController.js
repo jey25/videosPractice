@@ -1,49 +1,32 @@
 
-    let videos = [
-        {
-            title: "first video",
-            rating: 5,
-            comments: 2,
-            createdAt: "2 minute ago",
-            views: 1,
-            id:1,
-        },
-        {
-            title: "Second video",
-            rating: 4,
-            comments: 1,
-            createdAt: "5 minute ago",
-            views: 50,
-            id:2,
-        },
-        {
-            title: "3rd video",
-            rating: 8,
-            comments: 30,
-            createdAt: "12 minute ago",
-            views: 5,
-            id:3,
-        },
-    ]
+import Video from "../models/Video";
 
-export const trending = (req, res) => {
-    return res.render("home", {pageTitle: "Home", videos});
+Video.find({}, (error, videos) => {
+});
+
+
+export const home = async (req, res) => {
+    try {
+    const videos = await Video.find({});
+    return res.render("home", {pageTitle: "Home", videos:[]});
+    } catch {
+    return res.render("server-error");
+    }
 };
+
 export const watch = (req, res) => {
     const { id } = req.params;
-    const video = videos[id - 1];
-    return res.render("watch", {pageTitle: `Watching: ${video.title}`, video});
+    return res.render("watch", {pageTitle: `Watching`});
 }
+
 export const getEdit = (req, res) => {
     const { id } = req.params;
-    const video = videos[id - 1];
-    return res.render("edit", {pageTitle: `Editing: ${video.title}`, video});
+    return res.render("edit", {pageTitle: `Editing`});
 }
 
 export const postEdit = (req, res) => {
     const { id } = req.params;
     const {title} = req.body;
-    videos[id - 1].title = title;
     return res.redirect(`/videos/${id}`);
 }
 
@@ -52,15 +35,15 @@ export const getUpload = (req, res) => {
 }
 
 export const postUpload = (req, res) => {
-    const {title} = req.body;
-    const newVideo = {
-            title,
-            rating: 0,
-            comments: 0,
-            createdAt: "Just now",
+    const {title, description, hashtags} = req.body;
+    const video = new Video({
+        title,
+        description,
+        createdAt: Date.now(),
+        meta: {
             views: 0,
-            id:videos.length + 1,
-    }
-    videos.push(newVideo);
+            rating: 0,
+        },
+    })
     return res.redirect("/");
 }
